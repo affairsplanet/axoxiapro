@@ -5,7 +5,7 @@ import MenuButton from './components/MenuButton';
 import Menu from './components/Menu';
 import SettingsPage from './components/SettingsPage';
 import ContactPage from './components/ContactPage';
-import PayPalButton from './components/PayPalButton';
+import PaymentOptions from './components/PaymentOptions';
 import AdminDashboard from './components/admin/AdminDashboard';
 import CustomerDashboard from './components/customer/CustomerDashboard';
 import DriverDashboard from './components/driver/DriverDashboard';
@@ -491,9 +491,6 @@ function App() {
             </div>
           ) : (
             <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">
-                {t('payNow')}
-              </h3>
               
               {paymentStatus === 'success' && (
                 <div className="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg">
@@ -507,10 +504,17 @@ function App() {
                 </div>
               )}
               
-              <PayPalButton
+              <PaymentOptions
                 amount={costs.total}
                 currency={currentCurrency}
-                onSuccess={handlePaymentSuccess}
+                customer={{
+                  firstname: shippingData.sender.firstName,
+                  lastname: shippingData.sender.lastName,
+                  email: shippingData.sender.email,
+                  phone: shippingData.sender.contact
+                }}
+                description={`Axoxia Shipping - ${shippingData.category} delivery`}
+                onSuccess={(details, method) => handlePaymentSuccess({ ...details, paymentMethod: method })}
                 onError={handlePaymentError}
                 disabled={paymentStatus === 'processing'}
               />

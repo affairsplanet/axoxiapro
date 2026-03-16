@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { ShippingData, Currency } from '../types';
 
-const BREVO_API_KEY = 'YOUR_BREVO_API_KEY'; // Replace with your Brevo API key
+const BREVO_API_KEY = import.meta.env.VITE_BREVO_API_KEY;
 const BREVO_API_URL = 'https://api.brevo.com/v3/smtp/email';
 
 interface EmailData {
@@ -16,6 +16,11 @@ export const sendShippingConfirmation = async (
   currency: Currency,
   paymentDetails?: any
 ): Promise<boolean> => {
+  if (!BREVO_API_KEY) {
+    console.error('Brevo API key is not configured');
+    return false;
+  }
+
   try {
     const emailData: EmailData = {
       to: shippingData.sender.email,

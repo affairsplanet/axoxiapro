@@ -18,10 +18,18 @@ const PayPalButton: React.FC<PayPalButtonProps> = ({
   disabled = false 
 }) => {
   const paypalOptions = {
-    "client-id": "YOUR_PAYPAL_CLIENT_ID", // Replace with your PayPal client ID
+    "client-id": import.meta.env.VITE_PAYPAL_CLIENT_ID || "",
     currency: currency.code === 'XOF' ? 'EUR' : currency.code, // PayPal doesn't support XOF directly
     intent: "capture"
   };
+
+  if (!import.meta.env.VITE_PAYPAL_CLIENT_ID) {
+    return (
+      <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+        <p className="text-red-800 text-sm">PayPal is not configured. Please contact support.</p>
+      </div>
+    );
+  }
 
   // Convert XOF to EUR for PayPal if needed
   const paypalAmount = currency.code === 'XOF' ? (amount / currency.rate).toFixed(2) : amount.toFixed(2);
